@@ -14,6 +14,5 @@ func main() {
 	ticker, _ := apiClient.GetTicker("BTC_USD")
 	fmt.Println(ticker)
 	fmt.Println(ticker.GetMidPrice())
-	fmt.Println(ticker.Datetime())
 	fmt.Println(ticker.TruncateDateTime(time.Hour))
 }
