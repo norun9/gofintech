@@ -289,10 +289,16 @@ func (api *APIClient) SendOrder(order *Order) (*ResponseSendChildOrder, error) {
 	}
 	//marshalでバイトに変換
 	url := "me/sendchildorder"
-	resp, _ := api.doRequest("POST", url, map[string]string{}, data)
+	resp, err := api.doRequest("POST", url, map[string]string{}, data)
+	if err != nil {
+		return nil, err
+	}
 	var response ResponseSendChildOrder
 
-	_ = json.Unmarshal(resp, &response)
+	err = json.Unmarshal(resp, &response)
+	if err != nil {
+		return nil, err
+	}
 	return &response, nil
 }
 
@@ -301,7 +307,7 @@ func (api *APIClient) ListOrder(query map[string]string) ([]Order, error) {
 	var responseListOrder []Order
 	err = json.Unmarshal(resp, &responseListOrder)
 	if err != nil {
-	return nil, err
+		return nil, err
 	}
 	return responseListOrder, nil
 }
