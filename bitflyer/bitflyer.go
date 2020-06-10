@@ -22,10 +22,15 @@ type APIClient struct {
 	httpClient *http.Client
 }
 
+func New(key, secret string) *APIClient {
+	apiClient := &APIClient{key,secret, &http.Client{}}
+	return apiClient
+}
+
 func (api APIClient) header(method, endpoint string, body []byte) map[string]string {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	log.Println(timestamp)
-	message := timestamp + method + endpoint + stirng(body)
+	message := timestamp + method + endpoint + string(body)
 
 	mac := hmac.New(sha256.New, []byte(api.secret))
 	mac.Write([]byte(message))
