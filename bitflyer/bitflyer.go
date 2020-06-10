@@ -23,7 +23,7 @@ type APIClient struct {
 }
 
 func New(key, secret string) *APIClient {
-	apiClient := &APIClient{key,secret, &http.Client{}}
+	apiClient := &APIClient{key, secret, &http.Client{}}
 	return apiClient
 }
 
@@ -96,7 +96,7 @@ func (api *APIClient) GetBalance() ([]Balance, error) {
 		return nil, err
 	}
 	var balance []Balance
-	err = json.Unmarshal(resp ,&balance)
+	err = json.Unmarshal(resp, &balance)
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
@@ -119,3 +119,34 @@ type Ticker struct {
 	VolumeByProduct float64 `json:"volume_by_product"`
 }
 
+func (t *Ticker) GetMidPrice() float64 {
+	return (t.BestBid + t.BestAsk) / 2
+}
+
+func (t *Ticker) Datetime() time.Time {
+	t.Timestamp = "2020-09-27T02:01:59.6005284Z"
+	datetime, err := time.Parse(time.RFC3339, t.Timestamp)
+	if err != nil {
+		log.Printf("action=Datetime, err=%s", err.Error())
+	}
+	return datetime
+}
+
+func (t *Ticker) TruncateDateTime(duration time.Duration) time.Time{
+	return t.Datetime().Truncate(duration)
+}
+
+func (api *APIClient) GetTicker(productCode string) (*Ticker, error) {
+	url := "ticker"
+	resp, err := api.doRequest("GET", url, map[string]string{"product_code": productCode}, nil)
+	log.Printf("url=%s resp=%s", url, string(resp))
+	if err != nil {
+		return nil, err
+	}
+	var ticker Ticker
+	err = json.Unmarshal(resp, &ticker)
+	if err != nil {
+		return nil, err
+	}
+	return &ticker, nil
+}
