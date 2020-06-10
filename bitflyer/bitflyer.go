@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -59,8 +60,19 @@ func (api *APIClient) doRequest(method, urlPath string, query map[string]string,
 	req.URL.RawQuery = q.Encode()
 
 	for key, value := range api.header(method, req.URL.RequestURI(), data) {
-		
+		req.Header.Add(key, value)
 	}
+
+	resp, err := api.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
 
 
