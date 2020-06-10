@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,15 +14,15 @@ import (
 	"time"
 )
 
-const  baseURL = "https://api.bitflyer.com/v1/"
+const baseURL = "https://api.bitflyer.com/v1/"
 
 type APIClient struct {
-	key string
-	secret string
+	key        string
+	secret     string
 	httpClient *http.Client
 }
 
-func (api APIClient) header(method, endpoint string, body []byte) map[string]string{
+func (api APIClient) header(method, endpoint string, body []byte) map[string]string {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	log.Println(timestamp)
 	message := timestamp + method + endpoint + stirng(body)
@@ -30,10 +31,10 @@ func (api APIClient) header(method, endpoint string, body []byte) map[string]str
 	mac.Write([]byte(message))
 	sign := hex.EncodeToString(mac.Sum(nil))
 	return map[string]string{
-		"ACCESS-KEY": api.key,
+		"ACCESS-KEY":       api.key,
 		"ACCESS-TIMESTAMP": timestamp,
-		"ACCESS-SIGN": sign,
-		"Content-Type": "application/json",
+		"ACCESS-SIGN":      sign,
+		"Content-Type":     "application/json",
 	}
 }
 
@@ -75,18 +76,26 @@ func (api *APIClient) doRequest(method, urlPath string, query map[string]string,
 	return body, nil
 }
 
+type Balance struct {
+	CurrentCode string  `json:"currency_code"`
+	Amount      float64 `json:"amount"`
+	Available   float64 `json:"available"`
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+func (api *APIClient) GetBalance() ([]Balance, error) {
+	url := "me/getbalance"
+	resp, err := api.doRequest("GET", url, map[string]string{}, nil)
+	log.Printf("url=%s resp=%s", url, string(resp))
+	if err != nil {
+		log.Printf("action=GetBalance err=%s", err.Error())
+		return nil, err
+	}
+	var balance []Balance
+	err = json.Unmarshal(resp ,&balance)
+	if err != nil {
+		log.Printf("action=GetBalance err=%s", err.Error())
+		return nil, err
+	}
+	return balance, nil
+}
 
