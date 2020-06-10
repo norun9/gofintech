@@ -1,12 +1,14 @@
 package main
 
 import (
+	"GoFintech/bitflyer"
 	"GoFintech/config"
 	"GoFintech/utils"
-	"log"
+	"fmt"
 )
 
 func main() {
 	utils.LoggingSettings(config.Config.LogFile)
-	log.Println("test")
+	apiClient := bitflyer.New(config.Config.ApiKey, config.Config.ApiSecret)
+	fmt.Println(apiClient.GetBalance())
 }
