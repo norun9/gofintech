@@ -1,10 +1,10 @@
 package models
 
 import (
+	"GoFintech/config"
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"GoFintech/config"
 	"log"
 	"time"
 )
