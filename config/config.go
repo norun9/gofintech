@@ -15,7 +15,7 @@ type ConfigList struct {
 
 	TradeDuration time.Duration
 	Durations     map[string]time.Duration
-	Dbname        string
+	DbName        string
 	SQLDriver     string
 	Port          int
 }
@@ -41,7 +41,10 @@ func init() {
 		LogFile:   cfg.Section("gotrading").Key("log_file").String(),
 		ProductCode: cfg.Section("gotrading").Key("product_code").String(),
 		Durations: durations,
-		TradeDuration: durations,[cfg.Section("gotrading").Key("trade_duration").String()],
+		TradeDuration: durations[cfg.Section("gotrading").Key("trade_duration").String()],
+		DbName:        cfg.Section("db").Key("name").String(),
+		SQLDriver:     cfg.Section("db").Key("driver").String(),
+		Port:          cfg.Section("web").Key("port").MustInt(),
 	}
 
 }
