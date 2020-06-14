@@ -1,6 +1,7 @@
 package models
 
 import (
+	"GoFintech/bitflyer"
 	"fmt"
 	"time"
 )
@@ -61,4 +62,8 @@ func GetCandle(productCode string, duration time.Duration, dateTime time.Time) *
 		return nil
 	}
 	return NewCandle(productCode, duration, candle.Time, candle.Open, candle.Close, candle.High, candle.Low, candle.Volume)
+}
+
+func CreateCandleWithDuration(ticker bitflyer.Ticker, productCode string, duration time.Duration) bool {
+	
 }
