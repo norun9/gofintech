@@ -1,8 +1,8 @@
 package models
 
 import (
-	"GoFintech/bitflyer"
 	"fmt"
+	"GoFintech/bitflyer"
 	"time"
 )
 
@@ -35,8 +35,8 @@ func (c *Candle) TableName() string {
 }
 
 func (c *Candle) Create() error {
-	cmd := fmt.Sprintf("insert into %s (time, open, close, high, low, volume) values (?, ?, ?, ?, ?, ?)", c.TableName())
-	_, err := DbConnection.Exec(cmd, c.Time.Format(time.RFC3339))
+	cmd := fmt.Sprintf("INSERT INTO %s (time, open, close, high, low, volume) VALUES (?, ?, ?, ?, ?, ?)", c.TableName())
+	_, err := DbConnection.Exec(cmd, c.Time.Format(time.RFC3339), c.Open, c.Close, c.High, c.Low, c.Volume)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (c *Candle) Create() error {
 }
 
 func (c *Candle) Save() error {
-	cmd := fmt.Sprintf("update %s set open = ?, hight = ?, low = ?, volume = ?, where time = ?", c.TableName())
+	cmd := fmt.Sprintf("UPDATE %s SET open = ?, close = ?, high = ?, low = ?, volume = ? WHERE time = ?", c.TableName())
 	_, err := DbConnection.Exec(cmd, c.Open, c.Close, c.High, c.Low, c.Volume, c.Time.Format(time.RFC3339))
 	if err != nil {
 		return err
@@ -79,7 +79,6 @@ func CreateCandleWithDuration(ticker bitflyer.Ticker, productCode string, durati
 	} else if currentCandle.Low >= price {
 		currentCandle.Low = price
 	}
-
 	currentCandle.Volume += ticker.Volume
 	currentCandle.Close = price
 	currentCandle.Save()
