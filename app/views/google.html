@@ -4,25 +4,24 @@
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
-
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 {{ range. }}
-                [`{{.Time}}`, {{.Low}}, {{.Open}}, {{.Close}}, {{.High}} ]
+                [{{.Time}}, {{.Low}}, {{.Open}}, {{.Close}}, {{.High}} ],
                 {{ end }}
-                // Treat first row as data as well.
+                // Treat the first row as data.
             ], true);
 
             var options = {
-                legend:'none',
+                legend: 'none',
+                bar: { groupWidth: '100%' }, // Remove space between bars.
                 candlestick: {
-                    fallingColor: { strokeWidth: 0, fill: '#a52714' },
-                    risingColor: { strokeWidth: 0, fill: '#0f9d58' }
+                    fallingColor: { strokeWidth: 0, fill: '#a52714' }, // red
+                    risingColor: { strokeWidth: 0, fill: '#0f9d58' }   // green
                 }
             };
 
             var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
-
             chart.draw(data, options);
         }
     </script>
