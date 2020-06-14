@@ -41,6 +41,7 @@ func init() {
 		LogFile:   cfg.Section("gotrading").Key("log_file").String(),
 		ProductCode: cfg.Section("gotrading").Key("product_code").String(),
 		Durations: durations,
+		TradeDuration: durations,[cfg.Section("gotrading").Key("trade_duration").String()],
 	}
 
 }
